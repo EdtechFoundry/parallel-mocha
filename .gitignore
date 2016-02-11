@@ -4,3 +4,4 @@ dump.rdb
 npm-debug.log
 log/
 config/runtime.json
+.idea
