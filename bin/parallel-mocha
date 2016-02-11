@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 
-var program = require('commander');
-var fs = require('fs');
-var glob = require('glob');
-var Runner = require('../lib/runner');
+const program = require('commander');
+const fs = require('fs');
+const glob = require('glob');
+const Runner = require('../lib/runner');
+const async = require('async');
 
 program
     .version(JSON.parse(fs.readFileSync(__dirname + '/../package.json', 'utf8')).version)
@@ -14,12 +15,21 @@ program
     .parse(process.argv);
 
 // TODO: how can i make sure workers is integer?
-var processes = program.processes || 20;
-var timeout = program.timeout || 300000;
-var slow = program.slow || 230000;
-var files = program.args;
+let processes = program.processes || 20;
+let timeout = program.timeout || 10000;
+let slow = program.slow || 2000;
+let files = program.args;
 
-glob(files, (err, files)=> {
+let resolveFilesQueue = files.map(
+    file=>(cb)=> {
+        glob(file, cb)
+    }
+);
+
+async.parallel(resolveFilesQueue, (err, files)=> {
+    if (err) {
+        throw err;
+    }
 
     var runner = new Runner(files, {
         processes: files.length,
@@ -27,14 +37,14 @@ glob(files, (err, files)=> {
         slow: slow
     });
 
-    runner.run(function (error) {
+    runner.run((error) => {
         if (error) {
             console.log('==== Failed: %s', error.message);
         } else {
             console.log('==== Pass!');
         }
     });
-
 });
+
 
 
