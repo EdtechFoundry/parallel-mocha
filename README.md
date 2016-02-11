@@ -5,7 +5,7 @@ run tests for mocha in parallel
 
 ## Instalation
 ```shell
-  npm install -g parallel-mocha
+  npm install -g edtechfoundry/parallel-mocha
 ```
 
 ## Usage
