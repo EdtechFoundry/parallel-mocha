@@ -44,10 +44,6 @@ async.parallel(resolveFilesQueue, (err, files)=> {
     env: environment
   });
 
-  process.stderr.on('data', (data)=> {
-    console.log(chalk.red(data));
-  })
-
   runner.run((error) => {
     if (error) {
       console.log(chalk.red(`Failed: ${error.message}`));
@@ -59,6 +55,3 @@ async.parallel(resolveFilesQueue, (err, files)=> {
     }
   });
 });
-
-
-
