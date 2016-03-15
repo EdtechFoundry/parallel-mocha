@@ -16,7 +16,6 @@ program
   .option('-s, --slow <n>', 'Wait for slow tests', parseInt)
   .parse(process.argv);
 
-let processes = program.processes || 20;
 let timeout = program.timeout || 10000;
 let slow = program.slow || 2000;
 let files = program.args;
@@ -38,7 +37,7 @@ async.parallel(resolveFilesQueue, (err, files)=> {
   }, []);
 
   var runner = new Runner(files, {
-    processes: files.length,
+    processes: program.processes || files.length,
     timeout: timeout,
     slow: slow,
     env: environment
