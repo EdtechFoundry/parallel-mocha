@@ -14,12 +14,18 @@ program
   .option('-p, --processes <n>', 'Set number of processes', parseInt)
   .option('-t, --timeout <n>', 'Timeout between testes', parseInt)
   .option('-s, --slow <n>', 'Wait for slow tests', parseInt)
+  .option('-r, --require <n>', 'Pass though require statement')
+  .option('-c, --compilers <n>', 'Specify compilers')
   .parse(process.argv);
 
 let timeout = program.timeout || 10000;
 let slow = program.slow || 2000;
 let files = program.args;
 let environment = program.environment || 'test';
+let required = program.require;
+let compilers = program.compilers;
+
+console.log(required, compilers);
 
 let resolveFilesQueue = files.map(
   file=>(cb)=> {
@@ -40,7 +46,9 @@ async.parallel(resolveFilesQueue, (err, files)=> {
     processes: program.processes || files.length,
     timeout: timeout,
     slow: slow,
-    env: environment
+    env: environment,
+    require: required,
+    compilers: compilers
   });
 
   runner.run((error) => {
